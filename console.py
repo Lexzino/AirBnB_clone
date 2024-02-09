@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/usr/bin/python3
 
 """A command-line interface for managing instances of BaseModel.
@@ -232,4 +231,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
->>>>>>> 08f76e49c21595c6f1dd47c16a7860bf83482069
