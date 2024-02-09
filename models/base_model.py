@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/usr/bin/python3
 """This script is the base model"""
 
@@ -85,5 +84,3 @@ class BaseModel:
     def __str__(self):
         name = self.__class__.__name__
         return "[{}] ({}) {}".format(name, self.id, self.__dict__)
-
->>>>>>> 08f76e49c21595c6f1dd47c16a7860bf83482069
