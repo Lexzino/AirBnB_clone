@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-    Console module for Airbnb project
+    Console module
 """
 
 
@@ -53,14 +53,14 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance in all_classes, saves it to the JSON file
             and prints the id
         """
-        argu_list = args.split()
-        if len(argu_list) == 0:
+        arguments_list = args.split()
+        if len(arguments_list) == 0:
             print('** class name missing **')
             return
         try:
-            result = eval(argu_list[0] + '()')
-            result.save()
-            print(result.id)
+            dummy = eval(arguments_list[0] + '()')
+            dummy.save()
+            print(dummy.id)
         except:
             print("** class doesn't exist **")
 
@@ -68,14 +68,14 @@ class HBNBCommand(cmd.Cmd):
         """Prints the string representation of an instance based
             on the class name and id
         """
-        argu_list = args.split()
+        arguments_list = args.split()
 
-        if Checker(argu_list):
-            reference = Checker(argu_list)
+        if validate(arguments_list):
+            objeto_reference = validate(arguments_list)
             all_instances = models.storage.all()
 
-            if reference in all_instances.keys():
-                reference = all_instances[reference]
+            if objeto_reference in all_instances.keys():
+                reference = all_instances[objeto_reference]
                 print(reference)
             else:
                 print("** no instance found **")
@@ -85,9 +85,9 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on the class name and id,
             save the change into the JSON file
         """
-        argu_list = args.split()
-        if Checker(argu_list):
-            obj_reference = Checker(argu_list)
+        arguments_list = args.split()
+        if validate(arguments_list):
+            obj_reference = validate(arguments_list)
             all_instances = models.storage.all()
 
             if obj_reference in all_instances.keys():
@@ -119,14 +119,14 @@ class HBNBCommand(cmd.Cmd):
         """Update an specific dictionary based in the class name
             and the id reference
         """
-        argu_list = args.split()
-        if Checker(argu_list):
-            reference = Checker(argu_list)
+        arguments_list = args.split()
+        if validate(arguments_list):
+            objeto_reference = validate(arguments_list)
             all_instances = models.storage.all()
 
-            if reference in all_instances.keys():
-                obj = all_instances[reference]
-                len_arg_list = len(argu_list)
+            if objeto_reference in all_instances.keys():
+                obj = all_instances[objeto_reference]
+                len_arg_list = len(arguments_list)
 
                 if len_arg_list < 3:
                     print("** attribute name missing **")
@@ -136,16 +136,16 @@ class HBNBCommand(cmd.Cmd):
                     return
                 else:
                     try:
-                        value = int(argu_list[3].replace('"', ""))
+                        value = int(arguments_list[3].replace('"', ""))
                     except:
                         try:
-                            value = float(argu_list[3].replace('"', ""))
+                            value = float(arguments_list[3].replace('"', ""))
                         except:
                             try:
-                                value = str(argu_list[3].replace('"', ""))
+                                value = str(arguments_list[3].replace('"', ""))
                             except:
                                 pass
-                    obj.__dict__[argu_list[2]] = value
+                    obj.__dict__[arguments_list[2]] = value
                     models.storage.save()
                     return
             else:
@@ -153,8 +153,8 @@ class HBNBCommand(cmd.Cmd):
                 return
 
 
-def Checker(list_args):
-    """Function to Checker content in list or arguments
+def validate(list_args):
+    """Function to validate content in list or arguments
     """
     if list:
         len_list = len(list_args)
@@ -170,8 +170,8 @@ def Checker(list_args):
             print("** instance id missing **")
             return None
 
-        reference = list_args[0] + '.' + list_args[1]
-        return reference
+        obj_reference = list_args[0] + '.' + list_args[1]
+        return obj_reference
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
