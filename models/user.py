@@ -1,21 +1,17 @@
 #!/usr/bin/python3
-<<<<<<< HEAD
-"""This module creates a User class"""
-=======
-"""User module.
-"""
->>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91
+"""Defines the User class."""
 from models.base_model import BaseModel
 
 
 class User(BaseModel):
-<<<<<<< HEAD
-    """The class for managing user objects"""
-
-=======
-    """Define user class
+    """Represent a User.
+    Attributes:
+        email (str): The email of the user.
+        password (str): The password of the user.
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
     """
->>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91
+
     email = ""
     password = ""
     first_name = ""
