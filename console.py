@@ -1,178 +1,202 @@
 #!/usr/bin/python3
 """
-    Console module for Airbnb project
+Module Console
 """
-
-
+import cmd
+import shlex
+import sys
 import models
 from models.base_model import BaseModel
-from models.engine.file_storage import FileStorage
-from datetime import datetime
-import cmd
-from models.user import User
-from models.state import State
-from models.city import City
 from models.amenity import Amenity
+from models.city import City
 from models.place import Place
 from models.review import Review
+from models.state import State
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
-    """
-        Define HBNBCommand class for console
-    """
-    prompt = "(hbnb) "
-    all_classes = ['BaseModel', 'User', 'Place', 'State',
-                   'City', 'Amenity', 'Review']
+    """HBNB Class """
+    prompt = '(hbnb) '
 
-    def do_quit(self, args):
-        """
-            Command to quit from the command interpreter
-        """
+    classes = {'BaseModel': BaseModel, 'Amenity': Amenity,
+               'State': State, 'Place': Place, 'Review': Review,
+               'User': User, 'City': City}
+
+    def do_quit(self, argument):
+        """ Defines quit option"""
         return True
 
-    def do_EOF(self, args):
-        """
-            Command to exit from the command interpreter
-        """
+    def do_EOF(self, argument):
+        """ Defines EOF option"""
+        print()
         return True
-
-    def help_quit(self):
-        """
-            Command to show quit documentation
-        """
-        print("Quit command to exit the program\n")
 
     def emptyline(self):
-        """
-            Command do nothing when emptyline appears
-        """
+        """ Defines Empty option"""
         pass
 
-    def do_create(self, args):
-        """Creates a new instance in all_classes, saves it to the JSON file
-            and prints the id
-        """
-        argu_list = args.split()
-        if len(argu_list) == 0:
-            print('** class name missing **')
-            return
-        try:
-            result = eval(argu_list[0] + '()')
-            result.save()
-            print(result.id)
-        except:
+    def do_create(self, argument):
+        """Creates an instance of BaseModel"""
+        if argument:
+            if argument in self.classes:
+                # instance = models.base_model.BaseModel()
+                get_class = getattr(sys.modules[__name__], argument)
+                instance = get_class()
+                print(instance.id)
+                models.storage.save()
+            else:
+                print("** class doesn't exist **")
+        else:
+            print("** class name missing **")
+        return
+
+    def do_show(self, argument):
+        """string representation based on the class name and id"""
+        tokens = shlex.split(argument)
+        if len(tokens) == 0:
+            print("** class name missing **")
+        elif len(tokens) == 1:
+            print("** instance id missing **")
+        elif tokens[0] not in self.classes:
             print("** class doesn't exist **")
-
-    def do_show(self, args):
-        """Prints the string representation of an instance based
-            on the class name and id
-        """
-        argu_list = args.split()
-
-        if Checker(argu_list):
-            reference = Checker(argu_list)
-            all_instances = models.storage.all()
-
-            if reference in all_instances.keys():
-                reference = all_instances[reference]
-                print(reference)
+        else:
+            dic = models.storage.all()
+            # Key has format <className>.id
+            keyU = tokens[0] + '.' + str(tokens[1])
+            if keyU in dic:
+                print(dic[keyU])
             else:
                 print("** no instance found **")
-                return
+        return
 
-    def do_destroy(self, args):
-        """Deletes an instance based on the class name and id,
-            save the change into the JSON file
-        """
-        argu_list = args.split()
-        if Checker(argu_list):
-            obj_reference = Checker(argu_list)
-            all_instances = models.storage.all()
-
-            if obj_reference in all_instances.keys():
-                del all_instances[obj_reference]
+    def do_destroy(self, argument):
+        """Deletes an instance based on the class name and id"""
+        tokensD = shlex.split(argument)
+        if len(tokensD) == 0:
+            print("** class name missing **")
+            return
+        elif len(tokensD) == 1:
+            print("** instance id missing **")
+            return
+        elif tokensD[0] not in self.classes:
+            print("** class doesn't exist **")
+            return
+        else:
+            dic = models.storage.all()
+            # Key has format <className>.id
+            key = tokensD[0] + '.' + tokensD[1]
+            if key in dic:
+                del dic[key]
                 models.storage.save()
             else:
                 print("** no instance found **")
-                return
 
-    def do_all(self, args):
-        """Prints all string representation of all instances
-            based or not on the class name
-        """
-        instances = models.storage.all()
-        if args:
-            arg_list = args.split()
-            print(arg_list[0])
-            if arg_list[0] not in self.all_classes:
-                print("** class doesn't exist **")
-            else:
-                new_list = [str(instances[obj]) for obj in instances.keys()
-                            if arg_list[0] in obj]
-                print(new_list)
-        else:
-            new_list = [str(instances[obj]) for obj in instances.keys()]
-            print(new_list)
+            # for i in dic.values():
+            #     if i.__class__.__name__ == tokensD[0] and i.id == tokensD[1]:
+            #         del i
+            #         models.storage.save()
+            #         return
+            # print("** instance id missing **")
+            # models.storage.save()
 
-    def do_update(self, args):
-        """Update an specific dictionary based in the class name
-            and the id reference
-        """
-        argu_list = args.split()
-        if Checker(argu_list):
-            reference = Checker(argu_list)
-            all_instances = models.storage.all()
+    def do_all(self, argument):
+        """all string representation of all instances"""
+        tokensA = shlex.split(argument)
+        listI = []
+        dic = models.storage.all()
+        # show all if no class is passed
+        if len(tokensA) == 0:
+            for key in dic:
+                representation_Class = str(dic[key])
+                listI.append(representation_Class)
+            # if listI:
+            print(listI)
+            return
 
-            if reference in all_instances.keys():
-                obj = all_instances[reference]
-                len_arg_list = len(argu_list)
-
-                if len_arg_list < 3:
-                    print("** attribute name missing **")
-                    return
-                elif len_arg_list < 4:
-                    print("** value missing **")
-                    return
-                else:
-                    try:
-                        value = int(argu_list[3].replace('"', ""))
-                    except:
-                        try:
-                            value = float(argu_list[3].replace('"', ""))
-                        except:
-                            try:
-                                value = str(argu_list[3].replace('"', ""))
-                            except:
-                                pass
-                    obj.__dict__[argu_list[2]] = value
-                    models.storage.save()
-                    return
-            else:
-                print("** no instance found **")
-                return
-
-
-def Checker(list_args):
-    """Function to Checker content in list or arguments
-    """
-    if list:
-        len_list = len(list_args)
-        if len_list < 1:
-            print("** class name missing **")
-            return None
-
-        if (list_args[0] not in HBNBCommand.all_classes):
+        if tokensA[0] not in self.classes:
             print("** class doesn't exist **")
-            return None
+            return
+        else:
+            # Representation for a specific class
+            representation_Class = ""
+            for key in dic:
+                className = key.split('.')
+                if className[0] == tokensA[0]:
+                    # This form doesn't work
+                    # listI.append(dic[key])
+                    representation_Class = str(dic[key])
+                    listI.append(representation_Class)
+            # if listI:
+            print(listI)
 
-        if len_list < 2:
+    def do_update(self, argument):
+        """Updates an instance based on the class name and id """
+        tokensU = shlex.split(argument)
+        if len(tokensU) == 0:
+            print("** class name missing **")
+            return
+        elif len(tokensU) == 1:
             print("** instance id missing **")
-            return None
+            return
+        elif len(tokensU) == 2:
+            print("** attribute name missing **")
+            return
+        elif len(tokensU) == 3:
+            print("** value missing **")
+            return
+        elif tokensU[0] not in self.classes:
+            print("** class doesn't exist **")
+            return
+        keyI = tokensU[0] + "." + tokensU[1]
+        dicI = models.storage.all()
+        try:
+            instanceU = dicI[keyI]
+        except KeyError:
+            print("** no instance found **")
+            return
+        try:
+            typeA = type(getattr(instanceU, tokensU[2]))
+            tokensU[3] = typeA(tokensU[3])
+        except AttributeError:
+            pass
+        setattr(instanceU, tokensU[2], tokensU[3])
+        models.storage.save()
 
-        reference = list_args[0] + '.' + list_args[1]
-        return reference
+    def do_count(self, argument):
+        """  retrieve the number of instances of a class """
+        tokensA = shlex.split(argument)
+        dic = models.storage.all()
+        num_instances = 0
+        if tokensA[0] not in self.classes:
+            print("** class doesn't exist **")
+            return
+        else:
+            for key in dic:
+                className = key.split('.')
+                if className[0] == tokensA[0]:
+                    num_instances += 1
+
+            print(num_instances)
+
+    def precmd(self, argument):
+        """ executed just before the command line line is interpreted """
+        args = argument.split('.', 1)
+        if len(args) == 2:
+            _class = args[0]
+            args = args[1].split('(', 1)
+            command = args[0]
+            if len(args) == 2:
+                args = args[1].split(')', 1)
+                if len(args) == 2:
+                    _id = args[0]
+                    other_arguments = args[1]
+            line = command + " " + _class + " " + _id + " " + other_arguments
+            return line
+        else:
+            return argument
+
 
 if __name__ == '__main__':
+    """infinite loop"""
     HBNBCommand().cmdloop()
-
