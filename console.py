@@ -2,7 +2,7 @@
 
 """A command-line interface for managing instances of BaseModel.
 
-This module provides a command-line interpreter for managing instances of BaseModel.
+This module supply a command-line interpreter managing instances of BaseModel.
 It defines commands for creating, displaying, updating, and deleting instances.
 
 """
@@ -138,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """Prints the string representation of all instances."""
-        if line:
+        if line != "":
             words = line.split(' ')
             if words[0] not in storage.classes():
                 print("** class doesn't exist **")
