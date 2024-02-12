@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+<<<<<<< HEAD
 """Module for FileStorage class."""
 
 import datetime
@@ -9,10 +10,26 @@ import os
 class FileStorage:
 
     """Class for storing and retrieving data"""
+=======
+"""
+    Module of file_storage class
+"""
+
+
+import json
+
+
+class FileStorage():
+    """
+        Define FileStorage class to serialize and deserialize instances to
+        a JSON file and from a JSON file.
+    """
+>>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
+<<<<<<< HEAD
         """returns the dictionary __objects"""
         return FileStorage.__objects
 
@@ -29,6 +46,35 @@ class FileStorage:
 
     def classes(self):
         """Returns a dictionary of valid classes and their references"""
+=======
+        """
+            Method to return the dictionary
+        """
+        return FileStorage.__objects
+
+    def new(self, obj):
+        """
+            sets in __objects the obj with key <obj class name>.id
+        """
+        obj_name = obj.__class__.__name__
+        obj_id = obj.id
+        FileStorage.__objects[obj_name + '.' + obj_id] = obj
+
+    def save(self):
+        """
+            serializes __objects to the JSON file
+        """
+        new_dict = {}
+        for key, value in FileStorage.__objects.items():
+            new_dict[key] = value.to_dict()
+        with open(FileStorage.__file_path, "w", encoding='utf-8') as File:
+            json.dump(new_dict, File)
+
+    def reload(self):
+        """
+            deserializes the JSON file to __objects
+        """
+>>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91
         from models.base_model import BaseModel
         from models.user import User
         from models.state import State
@@ -36,6 +82,7 @@ class FileStorage:
         from models.amenity import Amenity
         from models.place import Place
         from models.review import Review
+<<<<<<< HEAD
 
         classes = {"BaseModel": BaseModel,
                    "User": User,
@@ -93,3 +140,13 @@ class FileStorage:
                          "text": str}
         }
         return attributes
+=======
+        try:
+            with open(FileStorage.__file_path, encoding='utf-8') as File:
+                file_dict = json.load(File)
+                cls = '__class__'
+                for key, value in file_dict.items():
+                    FileStorage.__objects[key] = eval(value[cls] + '(**value)')
+        except FileNotFoundError:
+            pass
+>>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91

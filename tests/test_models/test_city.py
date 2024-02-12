@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+<<<<<<< HEAD
 """Defines unittests for models/city.py.
 
 Unittest classes:
@@ -193,3 +194,23 @@ class TestCity_to_dict(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+=======
+"""Test City"""
+import unittest
+import pep8
+from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.state import State
+from models.review import Review
+
+
+class Testcity(unittest.TestCase):
+
+    def test_pep8_conformance_city(self):
+        """Test that we conform to PEP8."""
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(['models/city.py'])
+        self.assertEqual(result.total_errors, 0, "Found style errors")
+>>>>>>> 07d301bcc0720ce90bcdb7669deb9c857fd9da91
