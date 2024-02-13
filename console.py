@@ -115,7 +115,7 @@ class HBNBCommand(cmd.Cmd):
             new_list = [str(instances[obj]) for obj in instances.keys()]
             print(new_list)
 
-def do_update(self, args):
+    def do_update(self, args):
         """Update an specific dictionary based in the class name
             and the id reference
         """
@@ -151,7 +151,6 @@ def do_update(self, args):
             else:
                 print("** no instance found **")
                 return
-
 
 
 def Checker(list_args):
