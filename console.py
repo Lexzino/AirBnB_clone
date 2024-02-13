@@ -116,36 +116,41 @@ class HBNBCommand(cmd.Cmd):
             print(new_list)
 
 def do_update(self, args):
-    """Update a specific dictionary based on the class name and the id reference."""
-    argu_list = args.split()
-    if Checker(argu_list):
-        reference = Checker(argu_list)
-        all_instances = models.storage.all()
+        """Update an specific dictionary based in the class name
+            and the id reference
+        """
+        argu_list = args.split()
+        if Checker(argu_list):
+            reference = Checker(argu_list)
+            all_instances = models.storage.all()
 
-        if reference in all_instances.keys():
-            obj = all_instances[reference]
-            len_arg_list = len(argu_list)
+            if reference in all_instances.keys():
+                obj = all_instances[reference]
+                len_arg_list = len(argu_list)
 
-            if len_arg_list < 3:
-                print("** attribute name missing **")
-                return
-            elif len_arg_list < 4:
-                print("** value missing **")
-                return
-            else:
-                try:
-                    value = int(argu_list[3].replace('"', ""))
-                except ValueError:
+                if len_arg_list < 3:
+                    print("** attribute name missing **")
+                    return
+                elif len_arg_list < 4:
+                    print("** value missing **")
+                    return
+                else:
                     try:
-                        value = float(argu_list[3].replace('"', ""))
-                    except ValueError:
-                        value = argu_list[3].replace('"', "")
-                setattr(obj, argu_list[2], value)
-                models.storage.save()
+                        value = int(argu_list[3].replace('"', ""))
+                    except:
+                        try:
+                            value = float(argu_list[3].replace('"', ""))
+                        except:
+                            try:
+                                value = str(argu_list[3].replace('"', ""))
+                            except:
+                                pass
+                    obj.__dict__[argu_list[2]] = value
+                    models.storage.save()
+                    return
+            else:
+                print("** no instance found **")
                 return
-        else:
-            print("** no instance found **")
-            return
 
 
 
